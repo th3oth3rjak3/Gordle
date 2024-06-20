@@ -1,0 +1,16 @@
+
+Todo:
+  Implementation:
+    ☐ Create a function that gets user input.
+    ☐ Select a random word from a corpus
+    ☐ Implement a function to check if a letter is in the word
+    ☐ Implement a function to check if the word is complete
+    ☐ Implement a function to check if the letters are in the right order
+    ☐ Implement a function to check if the player is out of guesses
+    ☐ Create a Play method on Game to start the gameplay.
+  Testing:
+    ☐ Test if the word is selected from the corpus
+    ☐ Test if the letter is in the word
+    ☐ Test if the word is complete
+    ☐ Test if the letters are in the right order
+    ☐ Test if the player is out of guesses
