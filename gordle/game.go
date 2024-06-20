@@ -17,11 +17,11 @@ type Game struct {
 }
 
 // New creates a new Gordle Game, which can be used to Play.
-func New(playerInput io.Reader, solution string, maxAttempts int) *Game {
+func New(playerInput io.Reader, corpus []string, maxAttempts int) *Game {
 	game := &Game{
 		// reader is a buffered reader that reads from the provided io.Reader interface.
 		reader:      bufio.NewReader(playerInput),
-		solution:    splitToUppercaseCharacters(solution),
+		solution:    splitToUppercaseCharacters(pickWord(corpus)),
 		maxAttempts: maxAttempts,
 	}
 
@@ -35,13 +35,17 @@ func (g *Game) Play() {
 	// ensure the player only has maxAttempts tries to guess the word
 	for currentAttempt := 1; currentAttempt <= g.maxAttempts; currentAttempt++ {
 		guess := g.ask()
+
+		fmt.Printf("%s\n", g.provideFeedback(guess))
+
 		if slices.Equal(guess, g.solution) {
-			fmt.Printf("🎉 You won! You found it in %d guess(es)! The word was: %s.\n", currentAttempt, string(g.solution))
+			fmt.Printf("🎉 You won! You found it in %d attempt(s)! The word was: %s.\n", currentAttempt, string(g.solution))
 			return
 		}
+
 	}
 
-	fmt.Printf("😞 You've lost after %d guess(es)! The solution was: %s. \n", g.maxAttempts, string(g.solution))
+	fmt.Printf("😞 You've lost after %d attempt(s)! The solution was: %s. \n", g.maxAttempts, string(g.solution))
 }
 
 // ask reads user input until a valid suggestion is made.
@@ -81,4 +85,9 @@ func (g *Game) validateGuess(guess []rune) error {
 // splitToUppercaseCharacters is a naive implementation to turn a string into a list of characters.
 func splitToUppercaseCharacters(input string) []rune {
 	return []rune(strings.ToUpper(input))
+}
+
+func (g *Game) provideFeedback(guess []rune) string {
+	normalizedInput := splitToUppercaseCharacters(string(guess))
+	return ProvideFeedback(string(normalizedInput), string(g.solution))
 }

@@ -30,7 +30,7 @@ func TestGameAsk(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			game := New(strings.NewReader(tc.input), string(tc.want), 0)
+			game := New(strings.NewReader(tc.input), []string{string(tc.want)}, 0)
 
 			got := game.ask()
 			if !slices.Equal(got, tc.want) {
@@ -71,10 +71,66 @@ func TestGameValidateGuess(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			game := New(nil, "VALID", 0)
+			game := New(nil, []string{"VALID"}, 0)
 			got := game.validateGuess(tc.input)
 			if !errors.Is(got, tc.want) {
 				t.Errorf("got: %v, want: %v", got.Error(), tc.want.Error())
+			}
+		})
+	}
+}
+
+func TestGameProvideFeedback(t *testing.T) {
+	type testCase struct {
+		input    []rune
+		solution []string
+		want     string
+	}
+
+	testCases := map[string]testCase{
+		"all correct": {
+			input:    []rune("HELLO"),
+			solution: []string{"HELLO"},
+			want:     "💚💚💚💚💚",
+		},
+		"some correct with missing characters": {
+			input:    []rune("JELLO"),
+			solution: []string{"HELLO"},
+			want:     "⬜💚💚💚💚",
+		},
+		"none correct": {
+			input:    []rune("AAAAA"),
+			solution: []string{"BBBBB"},
+			want:     "⬜⬜⬜⬜⬜",
+		},
+		"wrong positions": {
+			input:    []rune("OLHEL"),
+			solution: []string{"HELLO"},
+			want:     "🟡🟡🟡🟡🟡",
+		},
+		"user input shorter than solution": {
+			input:    []rune("SMOL"),
+			solution: []string{"SMALL"},
+			want:     "💚💚⬜💚⬜",
+		},
+		"solution shorter than user input": {
+			input:    []rune("SMALL"),
+			solution: []string{"SMOL"},
+			want:     "💚💚⬜💚",
+		},
+		"empty input": {
+			input:    []rune(""),
+			solution: []string{"HELLO"},
+			want:     "⬜⬜⬜⬜⬜",
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			game := New(nil, tc.solution, 0)
+			got := game.provideFeedback(tc.input)
+			if got != tc.want {
+				t.Errorf("got: %s, want: %s", got, tc.want)
 			}
 		})
 	}
