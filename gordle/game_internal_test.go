@@ -30,8 +30,10 @@ func TestGameAsk(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			game := New(strings.NewReader(tc.input), []string{string(tc.want)}, 0)
-
+			game, err := New(strings.NewReader(tc.input), []string{string(tc.want)}, 0)
+			if err != nil {
+				t.Errorf("didn't expect an error, got: %s", err.Error())
+			}
 			got := game.ask()
 			if !slices.Equal(got, tc.want) {
 				t.Errorf("got: %v, want: %v", string(got), string(tc.want))
@@ -71,7 +73,10 @@ func TestGameValidateGuess(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			game := New(nil, []string{"VALID"}, 0)
+			game, err := New(nil, []string{"VALID"}, 0)
+			if err != nil {
+				t.Errorf("didn't expect an error, got: %s", err.Error())
+			}
 			got := game.validateGuess(tc.input)
 			if !errors.Is(got, tc.want) {
 				t.Errorf("got: %v, want: %v", got.Error(), tc.want.Error())
@@ -127,7 +132,10 @@ func TestGameProvideFeedback(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			game := New(nil, tc.solution, 0)
+			game, err := New(nil, tc.solution, 0)
+			if err != nil {
+				t.Errorf("didn't expect an error, got: %s", err.Error())
+			}
 			got := game.provideFeedback(tc.input)
 			if got != tc.want {
 				t.Errorf("got: %s, want: %s", got, tc.want)

@@ -13,9 +13,16 @@ const maxAttempts = 20
 func main() {
 	corpus, err := gordle.ReadCorpus("./gordle/corpus/english.txt")
 	if err != nil {
-		fmt.Printf("Error starting Gordle: %s\n", err.Error())
-		os.Exit(1)
+		exitGordle(err)
 	}
-	game := gordle.New(os.Stdin, corpus, maxAttempts)
+	game, err := gordle.New(os.Stdin, corpus, maxAttempts)
+	if err != nil {
+		exitGordle(err)
+	}
 	game.Play()
+}
+
+func exitGordle(err error) {
+	fmt.Printf("Error starting Gordle: %s\n", err.Error())
+	os.Exit(1)
 }

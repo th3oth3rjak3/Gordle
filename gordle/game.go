@@ -17,7 +17,11 @@ type Game struct {
 }
 
 // New creates a new Gordle Game, which can be used to Play.
-func New(playerInput io.Reader, corpus []string, maxAttempts int) *Game {
+func New(playerInput io.Reader, corpus []string, maxAttempts int) (*Game, error) {
+	if len(corpus) == 0 {
+		return nil, ErrCorpusIsEmpty
+	}
+
 	game := &Game{
 		// reader is a buffered reader that reads from the provided io.Reader interface.
 		reader:      bufio.NewReader(playerInput),
@@ -25,7 +29,7 @@ func New(playerInput io.Reader, corpus []string, maxAttempts int) *Game {
 		maxAttempts: maxAttempts,
 	}
 
-	return game
+	return game, nil
 }
 
 // Play starts Gordle gameplay.
