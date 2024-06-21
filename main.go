@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"os"
 
@@ -10,8 +11,17 @@ import (
 // maxAttempts is the maximum number of guesses a player may attempt.
 const maxAttempts = 20
 
+var (
+	//go:embed gordle/corpus/english.txt
+	f embed.FS
+)
+
 func main() {
-	corpus, err := gordle.ReadCorpus("./gordle/corpus/english.txt")
+	englishCorpus, err := f.ReadFile("gordle/corpus/english.txt")
+	if err != nil {
+		exitGordle(err)
+	}
+	corpus, err := gordle.ReadCorpus(englishCorpus)
 	if err != nil {
 		exitGordle(err)
 	}
