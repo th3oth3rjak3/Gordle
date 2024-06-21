@@ -1,10 +1,7 @@
 
 Todo:
-  Implementation:
-    ☐ Select a random word from a list of solutions
-    ☐ Implement a function to check if a letter is in the word
-    ☐ Implement a function to check if the word is complete
-    ☐ Implement a function to check if the letters are in the right order
-    ✔ Create a function that gets user input. @started(24-06-20 09:20) @done(24-06-20 09:32) @lasted(12m54s)
-    ✔ Implement a function to check if the player is out of guesses @done(24-06-20 10:26)
-    ✔ Create a Play method on Game to start the gameplay. @done(24-06-20 10:27)
+  Bugfixes:
+    ✔ Fix feedback bug: SALSA -> PALSY @done(24-06-20 19:16)
+  Enhancements:
+    ☐ Make a custom interface to allow different UI implementations to use the library.
+    

@@ -33,23 +33,28 @@ func New(playerInput io.Reader, corpus []string, maxAttempts int) (*Game, error)
 }
 
 // Play starts Gordle gameplay.
-func (g *Game) Play() {
+func (g *Game) Play() error {
 	fmt.Println("Welcome to Gordle!")
 
 	// ensure the player only has maxAttempts tries to guess the word
 	for currentAttempt := 1; currentAttempt <= g.maxAttempts; currentAttempt++ {
 		guess := g.ask()
 
-		fmt.Printf("%s\n", g.provideFeedback(guess))
+		fb, err := g.provideFeedback(guess)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("%s\n", fb)
 
 		if slices.Equal(guess, g.solution) {
 			fmt.Printf("🎉 You won! You found it in %d attempt(s)! The word was: %s.\n", currentAttempt, string(g.solution))
-			return
+			return nil
 		}
 
 	}
 
 	fmt.Printf("😞 You've lost after %d attempt(s)! The solution was: %s. \n", g.maxAttempts, string(g.solution))
+	return nil
 }
 
 // ask reads user input until a valid suggestion is made.
@@ -91,7 +96,11 @@ func splitToUppercaseCharacters(input string) []rune {
 	return []rune(strings.ToUpper(input))
 }
 
-func (g *Game) provideFeedback(guess []rune) string {
+func (g *Game) provideFeedback(guess []rune) (string, error) {
 	normalizedInput := splitToUppercaseCharacters(string(guess))
-	return ProvideFeedback(string(normalizedInput), string(g.solution))
+	fb, err := ProvideFeedback(string(normalizedInput), string(g.solution))
+	if err != nil {
+		return "", err
+	}
+	return fb.String(), nil
 }

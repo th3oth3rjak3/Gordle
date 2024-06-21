@@ -90,6 +90,7 @@ func TestGameProvideFeedback(t *testing.T) {
 		input    []rune
 		solution []string
 		want     string
+		wantErr  error
 	}
 
 	testCases := map[string]testCase{
@@ -97,36 +98,48 @@ func TestGameProvideFeedback(t *testing.T) {
 			input:    []rune("HELLO"),
 			solution: []string{"HELLO"},
 			want:     "💚💚💚💚💚",
+			wantErr:  nil,
 		},
 		"some correct with missing characters": {
 			input:    []rune("JELLO"),
 			solution: []string{"HELLO"},
 			want:     "⬜💚💚💚💚",
+			wantErr:  nil,
 		},
 		"none correct": {
 			input:    []rune("AAAAA"),
 			solution: []string{"BBBBB"},
 			want:     "⬜⬜⬜⬜⬜",
+			wantErr:  nil,
 		},
 		"wrong positions": {
 			input:    []rune("OLHEL"),
 			solution: []string{"HELLO"},
 			want:     "🟡🟡🟡🟡🟡",
+			wantErr:  nil,
 		},
 		"user input shorter than solution": {
 			input:    []rune("SMOL"),
 			solution: []string{"SMALL"},
-			want:     "💚💚⬜💚⬜",
+			want:     "",
+			wantErr:  ErrFeedbackInputSolutionLengthMismatch,
 		},
 		"solution shorter than user input": {
 			input:    []rune("SMALL"),
 			solution: []string{"SMOL"},
-			want:     "💚💚⬜💚",
+			want:     "",
+			wantErr:  ErrFeedbackInputSolutionLengthMismatch,
 		},
 		"empty input": {
 			input:    []rune(""),
 			solution: []string{"HELLO"},
-			want:     "⬜⬜⬜⬜⬜",
+			want:     "",
+			wantErr:  ErrFeedbackInputSolutionLengthMismatch,
+		},
+		"one letter with correct placement near the end": {
+			input:    []rune("SALSA"),
+			solution: []string{"PALSY"},
+			want:     "⬜💚💚💚⬜",
 		},
 	}
 
@@ -136,7 +149,10 @@ func TestGameProvideFeedback(t *testing.T) {
 			if err != nil {
 				t.Errorf("didn't expect an error, got: %s", err.Error())
 			}
-			got := game.provideFeedback(tc.input)
+			got, err := game.provideFeedback(tc.input)
+			if !errors.Is(err, tc.wantErr) {
+				t.Errorf("got: %v, want: %v", err, tc.wantErr)
+			}
 			if got != tc.want {
 				t.Errorf("got: %s, want: %s", got, tc.want)
 			}

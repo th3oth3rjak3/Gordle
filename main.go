@@ -19,10 +19,14 @@ func main() {
 	if err != nil {
 		exitGordle(err)
 	}
-	game.Play()
+
+	if err = game.Play(); err != nil {
+		exitGordle(err)
+	}
+
 }
 
 func exitGordle(err error) {
-	fmt.Printf("Error starting Gordle: %s\n", err.Error())
+	fmt.Printf("Unexpected error occurred: %s\n", err.Error())
 	os.Exit(1)
 }
